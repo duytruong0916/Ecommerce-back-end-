@@ -112,7 +112,25 @@ exports.list =(req,res)=>{
             })
    
 }
-
+//list by category
+exports.listByCategory =(req,res)=>{
+    let order = req.query.order ? req.query.order: 'asc';
+    let sortBy = req.query.sortBy ? req.query.sortBy: '_id';
+    let limit = req.query.limit ? parseInt(req.query.limit): 3;
+    console.log(req.category._id)
+    Product.find({category: req.category._id})
+            .select("-photo")
+            .populate("category")
+            .sort([[sortBy,order]])
+            .limit(limit)
+            .exec((err,products)=>{
+                if(err){
+                    return res.status(400).json({error: "Products not found"});
+                }
+                res.send(products);
+            })
+   
+}
 /*it will find the products based on the req product category
   all products that have the same category will be return
 */
@@ -204,6 +222,7 @@ exports.listSearch = (req,res) =>{
             return res.status(400).json({error: errorHandler(err)});
         }
         res.json(products)
+        console.log(products)
     }).select('-photo');
 }
 

@@ -20,10 +20,14 @@ const orderRouters = require('./routes/order');
 //app
 const app = express();
 //db
-mongoose.connect('mongodb+srv://duytruong:tatcadahet169@cluster0-kzgfb.mongodb.net/ecommerce?retryWrites=true&w=majority', {
+mongoose.connect(process.env.LOCAL_DATABASE, {
     useNewUrlParser: true,
-    useCreateIndex: true
-}).then(()=> console.log("Database connected"));
+    useCreateIndex: true,
+    useUnifiedTopology: true
+}).then(()=> console.log("Database connected"))
+.catch(err=>{
+    console.log(err)
+});
 //middlewares
 app.use(morgan('dev')); 
 app.use(bodyParser.json());

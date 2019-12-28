@@ -8,7 +8,7 @@ exports.categoryById = (req,res,next,id) =>{
             return res.status(400).json({error: "Category Not Found"});
             
         }
-        console.log("errororor")
+        console.log("Found!!!!!")
         req.category = category;
         next();
     })
