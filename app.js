@@ -20,7 +20,7 @@ const orderRouters = require('./routes/order');
 //app
 const app = express();
 //db
-mongoose.connect(process.env.LOCAL_DATABASE, {
+mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
