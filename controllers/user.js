@@ -1,6 +1,6 @@
-const User = require('../models/user');
+const User = require('../models/ultimate-user');
 const Orderschema = require('../models/order');
-
+const _ =require('lodash'); //for update
 const {errorHandler} = require('../helpers/dberrrorhandler');
 var bcrypt = require('bcryptjs');
 exports.userById = (req,res,next,id) =>{
@@ -17,7 +17,7 @@ exports.userById = (req,res,next,id) =>{
 
 exports.purchaseHistory = (req,res)=>{
     Orderschema.Order.find({user: req.profile._id})
-         .populate('user', "_id name")
+         .populate('user', "_id lastname")
          .sort('-created')
          .exec((err,orders)=>{
              if(err){
@@ -33,31 +33,61 @@ exports.read = (req,res)=>{
 
 }
 exports.update = (req,res)=>{
-    bcrypt.genSalt(10, (err, salt)=>{
-        let newuser = {
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password
-        };
-        bcrypt.hash(newuser.password, salt, (err,hash)=>{
-            if(err) console.log(err);
-            newuser.password = hash;
-            console.log(newuser)
-            User.findByIdAndUpdate({_id: req.profile._id},
-                {$set: {name: req.body.name, email: req.body.email, password:newuser.password}},
-                 {new:true}, (err, user)=>{
-                if(err){
-                    return res.status(400).json({error: 'Action failed' })
-                }
-                user.password= undefined;
-                res.json(user)
-            })
-        });
-     
+    const {firstname,lastname, email, password, address, phone} = req.body;
+    console.log(req.body, req.profile)
+    User.findOne({email:req.profile.email},(err,user)=>{
+        if(err){
+            console.log('Something went wrong. Try later')
+            return res.status(400).json({error:'Something went wrong. Try later'})
+        }
+        const updatedFields = {
+            password:password,
+            firstname:firstname,
+            lastname:lastname,
+            email:email,
+            address:address,
+            phone:phone
+        }
+        user = _.extend(user,updatedFields);  //update fields
+        console.log(user)
+        user.save((err,success)=>{
+            if(err){
+                console.log(err)
+                return res.status(400).json({error:'Error Updateing User'})
+            }
+            console.log('Updated User successfully');
+            res.json(user);
+        })
     })
+   
+
+}
+// exports.update = (req,res)=>{
+//     bcrypt.genSalt(10, (err, salt)=>{
+//         let newuser = {
+//             name: req.body.name,
+//             email: req.body.email,
+//             password: req.body.password
+//         };
+//         bcrypt.hash(newuser.password, salt, (err,hash)=>{
+//             if(err) console.log(err);
+//             newuser.password = hash;
+//             console.log(newuser)
+//             User.findByIdAndUpdate({_id: req.profile._id},
+//                 {$set: {name: req.body.name, email: req.body.email, password:newuser.password}},
+//                  {new:true}, (err, user)=>{
+//                 if(err){
+//                     return res.status(400).json({error: 'Action failed' })
+//                 }
+//                 user.password= undefined;
+//                 res.json(user)
+//             })
+//         });
+     
+//     })
 
    
-}
+// }
 exports.addOrderToHistory = (req,res,next)=>{
     let history = [];
     req.body.order.products.forEach(item=>{

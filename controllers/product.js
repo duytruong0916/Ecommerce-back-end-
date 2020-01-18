@@ -40,9 +40,10 @@ exports.create =(req,res)=>{
             product.photo.data = fs.readFileSync(files.photo.path);
             product.photo.contentType =  files.photo.type;
         }
+        console.log(product)
         product.save((err, result)=>{
             if(err){
-                return res.status(400).json({error: errorHandler(err)});
+                return res.status(400).json({error: 'This fucking error is here'});
             }
             res.json(result)
         })
@@ -93,32 +94,13 @@ exports.update =(req,res)=>{
     List and Sort
     SEll / ARRIVAL
     by sell /products?sortBy=sold&order=desc&limit=4
-    by arrivial /products?=createdAt&order=desc&limit=4
+    by arrivial /products?sortBy=createdAt&order=desc&limit=4
 */
 exports.list =(req,res)=>{
     let order = req.query.order ? req.query.order: 'asc';
     let sortBy = req.query.sortBy ? req.query.sortBy: '_id';
     let limit = req.query.limit ? parseInt(req.query.limit): 6;
     Product.find()
-            .select("-photo")
-            .populate("category")
-            .sort([[sortBy,order]])
-            .limit(limit)
-            .exec((err,products)=>{
-                if(err){
-                    return res.status(400).json({error: "Products not found"});
-                }
-                res.send(products);
-            })
-   
-}
-//list by category
-exports.listByCategory =(req,res)=>{
-    let order = req.query.order ? req.query.order: 'asc';
-    let sortBy = req.query.sortBy ? req.query.sortBy: '_id';
-    let limit = req.query.limit ? parseInt(req.query.limit): 3;
-    console.log(req.category._id)
-    Product.find({category: req.category._id})
             .select("-photo")
             .populate("category")
             .sort([[sortBy,order]])
@@ -156,13 +138,32 @@ exports.listCategory = (req,res)=>{
         res.send(categories);
     })
 }
-
+//list by category
+exports.listByCategory =(req,res)=>{
+    let order = req.query.order ? req.query.order: 'asc';
+    let sortBy = req.query.sortBy ? req.query.sortBy: '_id';
+    let limit = req.query.limit ? parseInt(req.query.limit): 100;
+    let skip = req.query.skip? parseInt( req.query.skip):0;
+    console.log(req.category._id)
+    Product.find({category: req.category._id})
+            .select("-photo")
+            .populate("category")
+            .sort([[sortBy,order]])
+            .skip(skip)
+            .limit(limit)
+            .exec((err,products)=>{
+                if(err){
+                    return res.status(400).json({error: "Products not found"});
+                }
+                res.send(products);
+            })
+   
+}
 exports.listBySearch = (req, res) => {
     let order = req.body.order ? req.body.order : "desc";
     let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
     let limit = req.body.limit ? parseInt(req.body.limit) : 100;
     let skip = parseInt(req.body.skip);
-    console.log(skip)
     let findArgs = {};
     // console.log(order, sortBy, limit, skip, req.body.filters);
     // console.log("findArgs", findArgs);

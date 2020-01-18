@@ -44,7 +44,6 @@ exports.AuthenticateUser = (req, res) => {
       }
       else {
           User.comparePassword(req.body.password, user.password, (err, isMatch) => {
-            console.log('heleo')
               if (err) throw err;
               if (isMatch) {
                   const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET);

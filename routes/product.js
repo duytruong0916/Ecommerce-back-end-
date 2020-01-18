@@ -4,6 +4,8 @@ const  {create, productById, read, remove,update, list, listRelated, listByCateg
 const  {requireSignin, isAuth, isAdmin} = require('../controllers/auth');
 const  {userById} = require('../controllers/user');
 const {categoryById} = require('../controllers/category');
+
+
 router.get('/product/:productid', read);
 router.get('/products', list);
 router.put('/product/:productid/:userid', requireSignin,isAuth, isAdmin, update);

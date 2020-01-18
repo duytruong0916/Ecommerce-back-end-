@@ -32,7 +32,7 @@ mongoose.connect(process.env.DATABASE, {
 app.use(morgan('dev')); 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(expressValidator());
+// app.use(expressValidator());
 app.use(cors());
 //userRoute middleware
 app.use('/api',authRouters);
@@ -42,8 +42,9 @@ app.use('/api',productRouters);
 app.use('/api',braintreeRouters);
 app.use('/api',orderRouters);
 
-const port = process.env.PORT||8000;
+// const port = process.env.PORT||8000;
 
-app.listen(port, ()=>{
-    console.log(`server is running on port ${port}`);
-})
+// app.listen(port, ()=>{
+//     console.log(`server is running on port ${port}`);
+// })
+module.exports = app;
