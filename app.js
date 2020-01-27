@@ -20,7 +20,7 @@ const orderRouters = require('./routes/order');
 //app
 const app = express();
 //db
-mongoose.connect(process.env.DATABASE, {
+mongoose.connect('mongodb+srv://duytruong:tatcadahet169@cluster0-kzgfb.mongodb.net/ecommerce?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true

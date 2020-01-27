@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router()
-const  {userById, read,update , purchaseHistory} = require('../controllers/user');
+const  {userById, read,update ,purchaseHistory} = require('../controllers/user');
 const  {requireSignin, isAuth, isAdmin} = require('../controllers/auth');
 
 
